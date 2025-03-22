@@ -3,7 +3,7 @@
 #include "character.h"
 
 typedef struct team{
-    Character members [4];
+    Character * members [4];
     char * teamName;    
 }Team;
 

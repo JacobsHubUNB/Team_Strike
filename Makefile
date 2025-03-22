@@ -1,10 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -I ./header
-DEPS = header/team.h header/tile.h header/character.h header/SaveFunction.h header/LoadFunction.h header/MoveFunction.h header/MapFunction.h
+DEPS = header/generate_character.h header/team.h header/tile.h header/character.h header/save_function.h header/load_function.h header/move_function.h header/map_function.h
 
-TARGET = runGame
+TARGET = run_game 
 
-SRCS = src/run_game.c src/generate_character.c src/load_function.c src/save_function.c src/map_function.c src/move_function.c
+SRCS = src/run_game.c src/generate_team.c src/load_function.c src/save_function.c src/map_function.c src/move_function.c 
 OBJS = $(SRCS:src/%.c=src/%.o)    
 
 all: $(TARGET)
