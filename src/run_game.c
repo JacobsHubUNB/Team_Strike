@@ -15,7 +15,7 @@ int main(int argc, char ** argv){
     //Generate Map
     //================================================================================================================//
     
-    printf("Welcome to Team Strike!\nEnemy Stats:\n");
+    printf("Welcome to Team Strike!\n");
      int MAX_COLS = 10; //map is always 10x10
     int MAX_ROWS = 10;
     Tile gameMap [MAX_ROWS][MAX_COLS];
@@ -25,8 +25,10 @@ int main(int argc, char ** argv){
     //Generate Enemy Team(AI)
     //================================================================================================================//
     Team * AI = generate_ai(gameMap);
-    
-    
+    printf("Enemy stats:\n");
+    for(int i; i <4; i++){
+        printf("HP: %d AD: %d\n", AI->members[i]->health, AI->members[i]->attack);
+    }
 
     // Players's team
     //================================================================================================================//                 
@@ -106,22 +108,22 @@ int main(int argc, char ** argv){
                 //move logic
                 switch(userInput[0]){
                     case 'w':
-                        moveUp(team1, gameMap, character);
+                        moveUp(team1, AI, gameMap, character);
                         printMap(gameMap);
                         break;
 
                     case 'a':
-                        moveLeft(team1, gameMap, character);
+                        moveLeft(team1, AI, gameMap, character);
                         printMap(gameMap);
                         break;
 
                     case 's':
-                        moveDown(team1,  gameMap, character);
+                        moveDown(team1, AI,  gameMap, character);
                         printMap(gameMap);
                         break;
 
                     case 'd':
-                        moveRight(team1,  gameMap, character);
+                        moveRight(team1, AI, gameMap, character);
                         printMap(gameMap);
                         break;
 
