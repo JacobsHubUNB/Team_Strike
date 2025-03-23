@@ -10,42 +10,45 @@
 #include "map_function.h"
 #include "generate_team.h"
 
-
 int main(int argc, char ** argv){
+    //Generate Map
     //Generate Map
     //================================================================================================================//
     
-    printf("Welcome to Team Strike!\n");
+    printf("Welcome to Team Strike!\nEnemy Stats:\n");
      int MAX_COLS = 10; //map is always 10x10
     int MAX_ROWS = 10;
     Tile gameMap [MAX_ROWS][MAX_COLS];
     generateMap(gameMap);
-
-
+ 
+ 
     //Generate Enemy Team(AI)
     //================================================================================================================//
     Team * AI = generate_ai(gameMap);
-    printf("Enemy stats:\n");
-    for(int i; i <4; i++){
-        printf("HP: %d AD: %d\n", AI->members[i]->health, AI->members[i]->attack);
-    }
-
+    
+    
+ 
     // Players's team
+    //================================================================================================================//                 
     //================================================================================================================//                 
     char Name[50];
     printf("\nPlease enter your team name: ");
     scanf("%s", Name);
     Team * team1 = NULL;
     team1 = generate_player(gameMap);
+    Team * team1 = NULL;
+    team1 = generate_player(gameMap);
     team1->teamName = Name;
-
-    printf("Generating Characters for <Team %s>\n", team1->teamName); 
+ 
+    printf("Generating Characters for <Team %s>\n", team1->teamName);
     //Dont print out character coord, just show on map
     for(int i; i <4; i++){
         printf("HP: %d AD: %d\n", team1->members[i]->health, team1->members[i]->attack);
     }
    
     //================================================================================================================//
+ 
+ 
 
     printMap(gameMap);
 
@@ -66,6 +69,8 @@ int main(int argc, char ** argv){
                 printf("Exiting game.\n");
                 free(team1);
                 free(AI);
+                free(team1);
+                free(AI);
                 return 0;
             }
             else if(userInput[0] == 's'){
@@ -74,12 +79,14 @@ int main(int argc, char ** argv){
                 scanf("%99s", &saveName[0]);
                 FILE * file = fopen(saveName, "w");
                 saveGame(gameMap, team1, AI, file); 
+                saveGame(gameMap, team1, AI, file); 
             }
             else if(userInput[0] == 'l'){
                 char saveName[100];
                 printf("Enter save name: ");
                 scanf("%99s", &saveName[0]);
                 FILE * file = fopen(saveName, "r");
+                loadGame(gameMap, team1, AI, file);
                 loadGame(gameMap, team1, AI, file);
                 printMap(gameMap);
             }
@@ -109,20 +116,23 @@ int main(int argc, char ** argv){
                 switch(userInput[0]){
                     case 'w':
                         moveUp(team1, AI, gameMap, character);
+                        moveUp(team1, AI, gameMap, character);
                         printMap(gameMap);
                         break;
 
                     case 'a':
                         moveLeft(team1, AI, gameMap, character);
+                        moveLeft(team1, AI, gameMap, character);
                         printMap(gameMap);
                         break;
 
                     case 's':
-                        moveDown(team1, AI,  gameMap, character);
+                        moveDown(team1, AI, gameMap, character);
                         printMap(gameMap);
                         break;
 
                     case 'd':
+                        moveRight(team1, AI, gameMap, character);
                         moveRight(team1, AI, gameMap, character);
                         printMap(gameMap);
                         break;
