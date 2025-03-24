@@ -119,7 +119,7 @@ int main(int argc, char ** argv){
                     case 'w':
                         moveUp(team1, AI, gameMap, character, 0);
                         printMap(gameMap);
-                        printf("\n AI's turn...\n");
+                        printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;
@@ -127,7 +127,7 @@ int main(int argc, char ** argv){
                     case 'a':
                         moveLeft(team1, AI, gameMap, character, 0);
                         printMap(gameMap);
-                        printf("\n AI's turn...\n");
+                        printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;
@@ -135,7 +135,7 @@ int main(int argc, char ** argv){
                     case 's':
                         moveDown(team1, AI, gameMap, character, 0);
                         printMap(gameMap);
-                        printf("\n AI's turn...\n");
+                        printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;
@@ -143,7 +143,7 @@ int main(int argc, char ** argv){
                     case 'd':
                         moveRight(team1, AI, gameMap, character, 0);
                         printMap(gameMap);
-                        printf("\n AI's turn...\n");
+                        printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;

@@ -44,15 +44,17 @@ void moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character
         }
     }
 
-    if(posY + 1 < 10 && gameMap[posX][posY + 1].type == '.'){
+    if(posY + 1 < 10 && gameMap[posX][posY + 1].type == '.' && isAI == 1){
+        team->members[character - 1]->pos[1] += 1;  
+        gameMap[posX][posY].type = '.'; 
+        gameMap[posX][posY + 1].type = 'X';
+        return;
+    }
+    else if(posY + 1 < 10 && gameMap[posX][posY + 1].type == '.'){
         team->members[character - 1]->pos[1] += 1;  
         gameMap[posX][posY].type = '.'; 
         gameMap[posX][posY + 1].type = '0' + character; 
-    }
-    else if(posY + 1 < 10 && gameMap[posX][posY + 1].type == '.' && isAI == 1){
-        team->members[character - 1]->pos[1] += 1;  
-        gameMap[posX][posY].type = '.'; 
-        gameMap[posX][posY + 1].type = 'X'; 
+        return;
     }
     else{
         printf("Invalid move\n");
@@ -77,15 +79,17 @@ void moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character,
         }
     }
 
-    if(posY - 1 >= 0 && gameMap[posX][posY - 1].type == '.'){
+    if(posY - 1 >= 0 && gameMap[posX][posY - 1].type == '.' && isAI == 1){
         team->members[character - 1]->pos[1] -= 1;  
         gameMap[posX][posY].type = '.'; 
-        gameMap[posX][posY - 1].type = '0' + character; 
+        gameMap[posX][posY - 1].type = 'X';
+        return; 
     } 
-    else if(posY - 1 >= 0 && gameMap[posX][posY - 1].type == '.' && isAI == 1){
+    else if(posY - 1 >= 0 && gameMap[posX][posY - 1].type == '.'){
         team->members[character - 1]->pos[1] -= 1;  
         gameMap[posX][posY].type = '.'; 
         gameMap[posX][posY - 1].type = '0' + character; 
+        return;
     }
     else{
         printf("Invalid move\n");
@@ -106,15 +110,17 @@ void moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character, i
         }
     }
 
-    if(posX - 1 >= 0 && gameMap[posX - 1][posY].type == '.'){
+    if(posX - 1 >= 0 && gameMap[posX - 1][posY].type == '.' && isAI == 1){
         team->members[character - 1]->pos[0] -= 1;  
         gameMap[posX][posY].type = '.'; 
-        gameMap[posX - 1][posY].type = '0' + character; 
+        gameMap[posX - 1][posY].type = 'X';
+        return; 
     } 
-    else if(posX - 1 >= 0 && gameMap[posX - 1][posY].type == '.' && isAI == 1){
+    else if(posX - 1 >= 0 && gameMap[posX - 1][posY].type == '.'){
         team->members[character - 1]->pos[0] -= 1;  
         gameMap[posX][posY].type = '.'; 
-        gameMap[posX - 1][posY].type = '0' + character; 
+        gameMap[posX - 1][posY].type = '0' + character;
+        return;
     }
     else{
         printf("Invalid move\n");
@@ -139,15 +145,17 @@ void moveDown(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character,
         }
     }
 
-    if(posX + 1 < 10 && gameMap[posX + 1][posY].type == '.'){
+    if(posX + 1 < 10 && gameMap[posX + 1][posY].type == '.' && isAI == 1){
         team->members[character - 1]->pos[0] += 1;  
         gameMap[posX][posY].type = '.'; 
-        gameMap[posX + 1][posY].type = '0' + character; 
+        gameMap[posX + 1][posY].type = 'X';
+        return;
     } 
-    else if(posX + 1 < 10 && gameMap[posX + 1][posY].type == '.' && isAI == 1){
+    else if(posX + 1 < 10 && gameMap[posX + 1][posY].type == '.'){
         team->members[character - 1]->pos[0] += 1;  
         gameMap[posX][posY].type = '.'; 
         gameMap[posX + 1][posY].type = '0' + character; 
+        return;
     }
     else{
         printf("Invalid move: Tile is occupied.\n");
