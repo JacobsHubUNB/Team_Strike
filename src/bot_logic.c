@@ -8,7 +8,8 @@ void advance(Team * ai, Team * player, Tile gamemap[10][10]){
     int xval, yval;
     closest = 10000;
     int playerIndex, AIindex;
-    for(int i =0; i < 4; i++){
+
+    for(int i = 0; i < 4; i++){
         for(int e = 0; e < 4; e++){
     
             xval = (player->members[e]->pos[0] - ai->members[i]->pos[0]);
@@ -18,6 +19,12 @@ void advance(Team * ai, Team * player, Tile gamemap[10][10]){
                 closest = temp;
                 playerIndex = e;
                 AIindex = i;
+            }
+
+
+            if (playerIndex == -1 || AIindex == -1) {
+                printf("No valid AI-Player pair found\n");
+                return;  // If no valid pair was found, exit the function
             }
         }
     }

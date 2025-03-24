@@ -9,6 +9,7 @@
 #include "move_function.h"
 #include "map_function.h"
 #include "generate_team.h"
+#include "bot_logic.h"
 
 int main(int argc, char ** argv){
     //Generate Map
@@ -116,22 +117,34 @@ int main(int argc, char ** argv){
                 //move logic
                 switch(userInput[0]){
                     case 'w':
-                        moveUp(team1, AI, gameMap, character);
+                        moveUp(team1, AI, gameMap, character, 0);
+                        printMap(gameMap);
+                        printf("\n AI's turn...\n");
+                        advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;
 
                     case 'a':
-                        moveLeft(team1, AI, gameMap, character);
+                        moveLeft(team1, AI, gameMap, character, 0);
+                        printMap(gameMap);
+                        printf("\n AI's turn...\n");
+                        advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;
 
                     case 's':
-                        moveDown(team1, AI, gameMap, character);
+                        moveDown(team1, AI, gameMap, character, 0);
+                        printMap(gameMap);
+                        printf("\n AI's turn...\n");
+                        advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;
 
                     case 'd':
-                        moveRight(team1, AI, gameMap, character);
+                        moveRight(team1, AI, gameMap, character, 0);
+                        printMap(gameMap);
+                        printf("\n AI's turn...\n");
+                        advance(AI, team1, gameMap);
                         printMap(gameMap);
                         break;
 
