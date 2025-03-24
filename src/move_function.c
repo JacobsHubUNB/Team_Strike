@@ -17,7 +17,7 @@ void attack(Character * attacker, Character * defender, Tile gameMap[10][10]){
 
     if(defender -> health <= 0){
         printf("Character defeated!\n");
-
+        
         //Once target hp < 0, move onto its tile
         gameMap[attacker->pos[0]][attacker->pos[1]].type = '.';
         attacker->pos[0] = defender->pos[0];
