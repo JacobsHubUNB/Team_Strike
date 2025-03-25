@@ -3,7 +3,8 @@
     "files.associations": {
         "tile.h": "c",
         "stdlib.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "load_function.h": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

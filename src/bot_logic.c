@@ -31,24 +31,24 @@ void advance(Team * ai, Team * player, Tile gamemap[10][10]){
     yval = (player->members[playerIndex]->pos[1] - ai->members[AIindex]->pos[1]);
 
     if(xval > 0)
-        moveRight(ai, player, gamemap, AIindex, 1);
+        moveRight(ai, player, gamemap, AIindex);
 
     else if(yval > 0)
-        moveUp(ai, player, gamemap, AIindex, 1);
+        moveUp(ai, player, gamemap, AIindex);
     else if(xval < 0)
-        moveLeft(ai, player, gamemap, AIindex, 1);
+        moveLeft(ai, player, gamemap, AIindex);
     else if(yval<0)
-        moveDown(ai, player, gamemap, AIindex, 1);
+        moveDown(ai, player, gamemap, AIindex);
     else{
         xval = (5 - ai->members[0]->pos[0]);
         yval = (5 - ai->members[0]->pos[1]);
         if(xval>0)
-            moveRight(ai, player, gamemap, AIindex, 1);
+            moveRight(ai, player, gamemap, AIindex);
         else if(yval>0)
-            moveUp(ai, player, gamemap, AIindex, 1);
+            moveUp(ai, player, gamemap, AIindex);
         else if(xval<0)
-            moveLeft(ai, player, gamemap, AIindex, 1);
+            moveLeft(ai, player, gamemap, AIindex);
         else
-            moveDown(ai, player, gamemap, AIindex, 1);
+            moveDown(ai, player, gamemap, AIindex);
     }
 }
