@@ -1,0 +1,49 @@
+GAME WORLD:
+8 . . . O . O 4 O . 
+. . . 2 O O 3 . . O 
+. . . . D . . . . . 
+. . . . . D O O O . 
+O O . . . . . . . O 
+. O . O . P . . . . 
+. . . . . 8 1 . . O 
+. O . O . . X . . . 
+. D . . . O . . . . 
+. O O . . . . . . . 
+
+PLAYER TEAM:
+Team Name: Diddy
+Character 1:
+  Health: 19
+  Attack: 4
+  Position: (6, 6)
+Character 2:
+  Health: 19
+  Attack: 10
+  Position: (3, 1)
+Character 3:
+  Health: 12
+  Attack: 3
+  Position: (6, 1)
+Character 4:
+  Health: 10
+  Attack: 6
+  Position: (7, 0)
+
+AI TEAM:
+Team Name: AI
+Character 1:
+  Health: 19
+  Attack: 6
+  Position: (1, 8)
+Character 2:
+  Health: 16
+  Attack: 1
+  Position: (4, 2)
+Character 3:
+  Health: 11
+  Attack: 0
+  Position: (5, 3)
+Character 4:
+  Health: 18
+  Attack: 10
+  Position: (6, 7)

@@ -160,31 +160,27 @@ int main(int argc, char ** argv){
                     case 'a':
                         moveLeft(team1, AI, gameMap, character);
                         printMap(gameMap);
-                       /**
+                        printf("\nAI's turn...\n");
+                        advance(AI, team1, gameMap);
+                        printMap(gameMap);
+                        printStats(team1, AI);
+                        break;
+                        
+                    case 's':
+                        moveDown(team1, AI, gameMap, character);
+                        printMap(gameMap);
                         printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
                         printStats(team1, AI);
                         break;
 
-                    case 's':
-                        moveDown(team1, AI, gameMap, character);
-                        printMap(gameMap);
-                       /**
-                        printf("\nAI's turn...\n");
-                        advance(AI, team1, gameMap);
-                        printMap(gameMap);
-                        */
-                        break;
-
                     case 'd':
                         moveRight(team1, AI, gameMap, character);
                         printMap(gameMap);
-                       /**
                         printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
-                        */
                         break;
 
                     default:
