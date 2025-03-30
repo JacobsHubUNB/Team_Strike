@@ -1,8 +1,8 @@
-#include "tile.h"
-#include "team.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "tile.h"
+#include "team.h"
 
 void attack(Character * attacker, Character * defender, Tile gameMap[10][10]){
     char attackerType = gameMap[attacker->pos[1]][attacker->pos[0]].type;
@@ -26,27 +26,15 @@ void attack(Character * attacker, Character * defender, Tile gameMap[10][10]){
     }
 }
 
-int attack_palace(Palace* palace, Character * attacker){
-    printf("\n*********************\n!!PALACE UNDER ATTACK!!\n***************\n");
-    palace->health -= attacker->attack;
-    if(palace->health <=0){
-        printf("\n*********************PALACE DESTROYED! GAME OVER!****************************\n");
-        free(palace->defender);
-        free(palace);
-        return 1;
-    }
-    return 0;
-}
-
 bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
     bool success =false;
     int posX = team->members[character - 1]->pos[0];
     int posY = team->members[character - 1]->pos[1];
     int newX = posX + 1;
     int newY = posY;
-    char moverType = gameMap[posX][posY].type;
+    char moverType = gameMap[posY][posX].type;
 
-    if(newX >= 10 || newY >= 10){
+    if(newX >= 10){
         printf("Invalid move: Out of bounds.\n");
     }
 
@@ -54,23 +42,21 @@ bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character
         if(enemyTeam->members[i]->pos[0] == newX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success =true;
-            return success;
+            success = true;
         }
     }
 
-    if(newX <10 && gameMap[newY][newX].type == '.'){
-        team->members[character - 1]->pos[0] += 1;  
+    if(gameMap[newY][newX].type == '.'){
+        team->members[character - 1]->pos[0] = newX;  
         gameMap[posY][posX].type = '.'; 
-        gameMap[posY][newX].type = moverType;
+        gameMap[newY][newX].type = moverType;
         success = true;
-        return success;
-        
     }
-    else
+    else{
         printf("Invalid move\n");
+    }
+
     return success;
-   
 }
 
 bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
@@ -79,51 +65,57 @@ bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character)
     int posY = team->members[character - 1]->pos[1];
     int newX = posX - 1;
     int newY = posY;
-    char moverType = gameMap[posX][posY].type;
-    if(newX >= 10 || newY >= 10){
+    char moverType = gameMap[posY][posX].type;
+
+    if(newX >= 10){
         printf("Invalid move: Out of bounds.\n");
     }
+
     for(int i = 0; i < 4; i++){
         if(enemyTeam->members[i]->pos[0] == newX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success =true;
-            return success;
+            success = true;
         }
     }
-    if(posY - 1 >= 0 && gameMap[posY][newX].type == '.'){
-        team->members[character - 1]->pos[0] -= 1;  
+    if(gameMap[posY][newX].type == '.'){
+        team->members[character - 1]->pos[0] = newX;  
         gameMap[posY][posX].type = '.'; 
-        gameMap[posY][newX].type = moverType;
-        success =true;
-            return success;
+        gameMap[newY][newX].type = moverType;
+        success = true;
     }
-    else
-        printf("Invalid move\n");
+    else{
+        printf("Invalid move\n");    
+    }
+
     return success;   
 }
 
 bool moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
-     bool success = false;
+    bool success = false;
     int posX = team->members[character - 1]->pos[0];
     int posY = team->members[character - 1]->pos[1];
-    int newY = posY -1;
-    char moverType = gameMap[posX][posY].type;
+    int newY = posY - 1;
+    int newX = posX;
+    char moverType = gameMap[posY][posX].type;
+
+    if(newY >= 10){
+        printf("Invalid move: Out of bounds.\n");
+    }
+
     for(int i = 0; i < 4; i++){
         if(enemyTeam->members[i]->pos[0] == posX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success =true;
-            return success;
+            success = true;
         }
     }
-    if(posY - 1 >= 0 && gameMap[newY][posX].type == '.'){
-        team->members[character - 1]->pos[1] += 1;  
+    if(gameMap[newY][newX].type == '.'){
+        team->members[character - 1]->pos[1] = newY;  
         gameMap[posY][posX].type = '.'; 
-        gameMap[newY][posX].type = moverType;
-        success =true;
-        return success;
-        }
+        gameMap[newY][newX].type = moverType;
+        success = true;
+    }
     else{
         printf("Invalid move\n");
     }
@@ -137,23 +129,25 @@ bool moveDown(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character)
     int posY = team->members[character - 1]->pos[1];
     int newY = posY + 1;
     int newX = posX;
-    char moverType = gameMap[posX][posY].type;
+    char moverType = gameMap[posY][posX].type;
+
+    if(newY >= 10){
+        printf("Invalid move: Out of bounds.\n");
+    }
 
     for(int i = 0; i < 4; i++){
         if(enemyTeam->members[i]->pos[0] == posX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success =true;
-            return success;
+            success = true;
         }
     }
-    if(posX - 1 >= 0 && gameMap[newY][posX].type == '.'){
-        team->members[character - 1]->pos[0] -= 1;  
+    if(gameMap[newY][newX].type == '.'){
+        team->members[character - 1]->pos[0] = newY;  
         gameMap[posY][posX].type = '.'; 
         gameMap[newY][newX].type = moverType;
-        success =true;
-        return success;
-        }
+        success = true;
+    }
     else{
         printf("Invalid move\n");
     }
