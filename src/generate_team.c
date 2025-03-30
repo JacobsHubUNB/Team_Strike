@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include "generate_team.h"
 
 Team * generate_ai(Tile game_map[10][10]){
@@ -85,9 +86,7 @@ Team * generate_player(Tile game_map [10][10]){
 }
 
 Team * generate_team(Tile game_map[10][10], bool isAI){
-    int max = 20;
-    int min = 10;
-
+    srand(time(NULL));
     Team * team = malloc(sizeof(Team));
     if(team == NULL){
         printf("Failed to allocate memory for team\n");
@@ -111,29 +110,29 @@ Team * generate_team(Tile game_map[10][10], bool isAI){
 
         if(isAI){
             team->teamName = "AI";
-            team->members[i]->pos[0] = rand() % 3; 
+            team->members[i]->pos[0] = rand() % 2; 
             team->members[i]->pos[1] = rand() % 10;
             posX = team->members[i]->pos[0];
             posY = team->members[i]->pos[1];
 
             if(i % 2 == 0){
-                team->members[i]->attack = rand() % (min + 1);
-                team->members[i]->health = rand() % (max + 1);
+                team->members[i]->attack = 3 + rand()%10;
+                team->members[i]->health = 15 + rand()%10;
                 game_map[posY][posX].type = 'D';
             }
             else{
-                team->members[i]->attack = rand() % (max + 1);
-                team->members[i]->health = rand() % (max + 1);
+                team->members[i]->attack = 5 + rand()%10;
+                team->members[i]->health = 10 + rand()%10;
                 game_map[posY][posX].type = 'X';
             }
         }
         else{
-            team->members[i]->pos[0] = 7 + (rand() % 3); 
+            team->members[i]->pos[0] = 8 + (rand() % 2); 
             team->members[i]->pos[1] = rand() % 10;
             posX = team->members[i]->pos[0];
             posY = team->members[i]->pos[1];
-            team->members[i]->attack = rand() % (max + 1);
-            team->members[i]->health = rand() % (max + 1);
+            team->members[i]->attack = 7 + rand()%7;
+            team->members[i]->health = 7 + rand()%7;
             game_map[posY][posX].type = '1' + i;
         }
     }

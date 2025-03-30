@@ -4,12 +4,7 @@
 #include "bot_logic.h"
 #include <stdbool.h>
 
-// Helper function to check if a tile is blocked
 bool isTileBlocked(Tile gameMap[10][10], int x, int y) {
-    // Check if the tile is within bounds and not empty
-    if (x < 0 || x >= 10 || y < 0 || y >= 10) {
-        return true;
-    }
     return gameMap[y][x].type != '.' && gameMap[y][x].type != 'P';
 }
 
@@ -23,9 +18,8 @@ bool findAlternativePath(Team* ai, Team* player, Tile gameMap[10][10], int AIind
         int newX = ai->members[AIindex]->pos[0] + dx[i];
         int newY = ai->members[AIindex]->pos[1] + dy[i];
         
-        // Check if this alternative path is not blocked
-        if (!isTileBlocked(gameMap, newX, newY)) {
-            if (dx[i] > 0)
+        if(!isTileBlocked(gameMap, newX, newY)){
+            if(dx[i] > 0)
                 return moveRight(ai, player, gameMap, AIindex + 1 );
             else if (dx[i] < 0)
                 return moveLeft(ai, player, gameMap, AIindex + 1);

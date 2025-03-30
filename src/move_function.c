@@ -26,7 +26,7 @@ void attack(Character * attacker, Character * defender, Tile gameMap[10][10]){
     }
 }
 
-bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
+bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], char character){
     bool success = false;
     int posX = team->members[character - 1]->pos[0];
     int posY = team->members[character - 1]->pos[1];
@@ -53,13 +53,13 @@ bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character
         return true;
     }
     else{
-        printf("Invalid move\n");
+        printf("Can't move right.\n");
     }
 
     return success;
 }
 
-bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
+bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], char character){
     bool success = false;
     int posX = team->members[character - 1]->pos[0];
     int posY = team->members[character - 1]->pos[1];
@@ -85,13 +85,13 @@ bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character)
         return true;
     }
     else{
-        printf("Invalid move\n");    
+        printf("Can't move left.\n");    
     }
 
     return success;   
 }
 
-bool moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
+bool moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], char character){
     bool success = false;
     int posX = team->members[character - 1]->pos[0];
     int posY = team->members[character - 1]->pos[1];
@@ -117,13 +117,13 @@ bool moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
         return true;
     }
     else{
-        printf("Invalid move\n");
+        printf("Can't move up.\n");
     }
 
     return success;
 }
 
-bool moveDown(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
+bool moveDown(Team* team, Team* enemyTeam, Tile gameMap [10][10], char character){
     bool success = false;
     int posX = team->members[character - 1]->pos[0];
     int posY = team->members[character - 1]->pos[1];
@@ -149,7 +149,7 @@ bool moveDown(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character)
         return true;
     }
     else{
-        printf("Invalid move\n");
+        printf("Can't move down.\n");
     }
 
     return success;
