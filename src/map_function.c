@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "map_function.h"
-#include "defender.h"
 
 // Function definition
 void printMap(Tile gameMap[10][10]) {
