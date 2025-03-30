@@ -10,7 +10,7 @@
 #include "map_function.h"
 #include "generate_team.h"
 #include "bot_logic.h"
-//Helper Function used In runtime
+
 int checkTeamAlive(Team* team) {
     int aliveCount = 0;
     for (int i = 0; i < 4; i++) {
@@ -19,18 +19,18 @@ int checkTeamAlive(Team* team) {
     }
     return aliveCount;
 }
+
 void printStats(Team * player, Team * ai){
-    printf("Team %s, Stats\n**************", player->teamName);
+    printf("*******************\nTeam %s stats:\n", player->teamName);
     for(int i = 0; i < 4; i++){
         if(player->members[i]->health > 0)
-            printf("\nPlayer # %d HP: %d AD: %d \n", i, player->members[i]->health, player->members[i]->attack );
+            printf("char#%d HP:%d AD:%d \n", i, player->members[i]->health, player->members[i]->attack);
     }
-    
 }
+
 int main(int argc, char ** argv){
-    //Generate Map
     printf("Welcome to Team Strike!\n");
-    int MAX_COLS = 10; //map is always 10x10
+    int MAX_COLS = 10; 
     int MAX_ROWS = 10;
     Tile gameMap [MAX_ROWS][MAX_COLS];
     generateMap(gameMap);
@@ -99,16 +99,12 @@ int main(int argc, char ** argv){
                     free(AI->members[i]);
                 }
                 free(team1);
-                free(AI);
-                free(gameMap[5][5].palace->defender);
-                free(gameMap[5][5].palace);
-               
-                
+                free(AI);                         
                 return 0;
             }
             else if(userInput[0] == 's'){
                 char saveName[100];
-                printf("Enter save name: ");
+                printf("Enter save name: "); 
                 scanf("%99s", &saveName[0]);
                 FILE * file = fopen(saveName, "w");
                 saveGame(gameMap, team1, AI, file); 
@@ -150,7 +146,6 @@ int main(int argc, char ** argv){
                     case 'w':
                         moveUp(team1, AI, gameMap, character);
                         printMap(gameMap);
-                        printStats(team1, AI);
                         printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
@@ -181,6 +176,7 @@ int main(int argc, char ** argv){
                         printf("\nAI's turn...\n");
                         advance(AI, team1, gameMap);
                         printMap(gameMap);
+                        printStats(team1, AI);
                         break;
 
                     default:
@@ -193,16 +189,4 @@ int main(int argc, char ** argv){
             }
         }   
     }
-
-    // Free memory
-    for (int i = 0; i < 4; i++) {
-        free(team1->members[i]);
-        free(AI->members[i]);
-    }
-    free(gameMap[5][5].palace->defender);
-    free(gameMap[5][5].palace);
-    free(team1);
-    free(AI);
-
-    return 0;
 }
