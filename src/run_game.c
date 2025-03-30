@@ -23,8 +23,10 @@ int checkTeamAlive(Team* team) {
 void printStats(Team * player, Team * ai){
     printf("*******************\nTeam %s stats:\n", player->teamName);
     for(int i = 0; i < 4; i++){
-        if(player->members[i]->health > 0)
+        if(player->members[i]->health > 0){
             printf("char#%d HP:%d AD:%d \n", i, player->members[i]->health, player->members[i]->attack);
+        }
+        printf("\n");
     }
 }
 
