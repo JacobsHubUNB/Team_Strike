@@ -25,13 +25,13 @@ void generateMap(Tile gameMap[10][10]){
         }
     }
 
-    int obstacleCount = 20;
+    int obstacleCount = 15;
     int placedObstacles = 0;
     while(placedObstacles <= obstacleCount){
         int X = rand() % 10;
         int Y = rand() % 10;
 
-        if(gameMap[X][Y].type == '.' && gameMap[X][Y].type != 'P' && gameMap[X][Y].type != '8'){
+        if(gameMap[X][Y].type == '.' && gameMap[X][Y].type != 'P'){
             gameMap[X][Y].type = 'O';
             placedObstacles++;
         }

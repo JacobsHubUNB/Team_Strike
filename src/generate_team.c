@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "generate_team.h"
 
 Team * generate_ai(Tile game_map[10][10]){
@@ -48,7 +49,7 @@ Team * generate_ai(Tile game_map[10][10]){
 Team * generate_player(Tile game_map [10][10]){
     int count = 0;
     int max = 20;
-    int min =10;
+    int min = 10;
     int posMax = 9;
     Team * teamPlayer = (Team*)malloc(sizeof(Team));
     if(!teamPlayer){
@@ -81,4 +82,60 @@ Team * generate_player(Tile game_map [10][10]){
     }
 
     return teamPlayer;
+}
+
+Team * generate_team(Tile game_map[10][10], bool isAI){
+    int max = 20;
+    int min = 10;
+
+    Team * team = malloc(sizeof(Team));
+    if(team == NULL){
+        printf("Failed to allocate memory for team\n");
+        return NULL;
+    }
+
+    for(int i = 0; i < 4; i++){
+        // Allocate memory for each team member
+        team->members[i] = malloc(sizeof(Character));
+        if(team->members[i] == NULL){
+            printf("Failed to allocate memory for team member %d\n", i);
+            // Free previously allocated members
+            for(int j = 0; j < i; j++){
+                free(team->members[j]);
+            }
+            free(team);
+            return NULL;
+        }
+
+        int posX, posY;
+
+        if(isAI){
+            team->teamName = "AI";
+            team->members[i]->pos[0] = rand() % 3; 
+            team->members[i]->pos[1] = rand() % 10;
+            posX = team->members[i]->pos[0];
+            posY = team->members[i]->pos[1];
+
+            if(i % 2 == 0){
+                team->members[i]->attack = rand() % (min + 1);
+                team->members[i]->health = rand() % (max + 1);
+                game_map[posY][posX].type = 'D';
+            }
+            else{
+                team->members[i]->attack = rand() % (max + 1);
+                team->members[i]->health = rand() % (max + 1);
+                game_map[posY][posX].type = 'X';
+            }
+        }
+        else{
+            team->members[i]->pos[0] = 7 + (rand() % 3); 
+            team->members[i]->pos[1] = rand() % 10;
+            posX = team->members[i]->pos[0];
+            posY = team->members[i]->pos[1];
+            team->members[i]->attack = rand() % (max + 1);
+            team->members[i]->health = rand() % (max + 1);
+            game_map[posY][posX].type = '1' + i;
+        }
+    }
+    return team;
 }

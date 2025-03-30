@@ -27,7 +27,7 @@ void attack(Character * attacker, Character * defender, Tile gameMap[10][10]){
 }
 
 bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
-    bool success =false;
+    bool success = false;
     int posX = team->members[character - 1]->pos[0];
     int posY = team->members[character - 1]->pos[1];
     int newX = posX + 1;
@@ -42,7 +42,7 @@ bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character
         if(enemyTeam->members[i]->pos[0] == newX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success = true;
+            return true;
         }
     }
 
@@ -50,7 +50,7 @@ bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character
         team->members[character - 1]->pos[0] = newX;  
         gameMap[posY][posX].type = '.'; 
         gameMap[newY][newX].type = moverType;
-        success = true;
+        return true;
     }
     else{
         printf("Invalid move\n");
@@ -75,14 +75,14 @@ bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character)
         if(enemyTeam->members[i]->pos[0] == newX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success = true;
+            return true;
         }
     }
     if(gameMap[posY][newX].type == '.'){
         team->members[character - 1]->pos[0] = newX;  
         gameMap[posY][posX].type = '.'; 
         gameMap[newY][newX].type = moverType;
-        success = true;
+        return true;
     }
     else{
         printf("Invalid move\n");    
@@ -107,14 +107,14 @@ bool moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character){
         if(enemyTeam->members[i]->pos[0] == posX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success = true;
+            return true;
         }
     }
     if(gameMap[newY][newX].type == '.'){
         team->members[character - 1]->pos[1] = newY;  
         gameMap[posY][posX].type = '.'; 
         gameMap[newY][newX].type = moverType;
-        success = true;
+        return true;
     }
     else{
         printf("Invalid move\n");
@@ -139,14 +139,14 @@ bool moveDown(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character)
         if(enemyTeam->members[i]->pos[0] == posX && enemyTeam->members[i]->pos[1] == newY){
             printf("Enemy detected! Attacking...\n");
             attack(team->members[character - 1], enemyTeam->members[i], gameMap);
-            success = true;
+            return true;
         }
     }
     if(gameMap[newY][newX].type == '.'){
         team->members[character - 1]->pos[0] = newY;  
         gameMap[posY][posX].type = '.'; 
         gameMap[newY][newX].type = moverType;
-        success = true;
+        return true;
     }
     else{
         printf("Invalid move\n");

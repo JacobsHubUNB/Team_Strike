@@ -26,8 +26,8 @@ void printStats(Team * player, Team * ai){
         if(player->members[i]->health > 0){
             printf("char#%d HP:%d AD:%d \n", i, player->members[i]->health, player->members[i]->attack);
         }
-        printf("\n");
     }
+    printf("\n");
 }
 
 int main(int argc, char ** argv){
@@ -38,8 +38,7 @@ int main(int argc, char ** argv){
     generateMap(gameMap);
  
     //Generate Enemy Team(AI)
-    Team * AI = generate_ai(gameMap);
-    AI->teamName = "AI";
+    Team * AI = generate_team(gameMap, true);
      
     printf("Generating Characters for <Team %s>\n", AI->teamName);
     //Dont print out character coord, just show on map
@@ -51,7 +50,7 @@ int main(int argc, char ** argv){
     char Name[50];
     printf("\nPlease enter your team name: ");
     scanf("%49s", Name);
-    Team * team1 = generate_player(gameMap);
+    Team * team1 = generate_team(gameMap, false);
     team1->teamName = malloc(strlen(Name) + 1);
 
     if(team1->teamName == NULL){
