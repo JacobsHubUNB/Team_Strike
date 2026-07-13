@@ -90,6 +90,8 @@ Team * generate_team(Tile game_map[10][10], bool isAI){
         printf("Failed to allocate memory for team\n");
         return NULL;
     }
+    team->isAI = isAI;
+    team->teamName = NULL;
 
     for(int i = 0; i < 4; i++){
         team->members[i] = malloc(sizeof(Character));
@@ -124,6 +126,9 @@ Team * generate_team(Tile game_map[10][10], bool isAI){
             team->members[i]->pos[0] = posX;
             team->members[i]->pos[1] = posY;
 
+            team->members[i]->berserker = false;
+            team->members[i]->bulldozer = false;
+
             if(i % 2 == 0){
                 team->members[i]->attack = 3 + rand()%10;
                 team->members[i]->health = 15 + rand()%10;
@@ -157,9 +162,7 @@ Team * generate_team(Tile game_map[10][10], bool isAI){
             team->members[i]->health = 8 + rand()%7;
 
             team->members[i]->berserker = (rand()%3 == 0);
-            if(!team->members[i]->berserker){
-                team->members[i]->bulldozer = true;
-            }
+            team->members[i]->bulldozer = !team->members[i]->berserker;
 
             game_map[posY][posX].type = '1' + i;
         }

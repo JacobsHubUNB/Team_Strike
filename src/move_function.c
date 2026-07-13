@@ -5,12 +5,12 @@
 #include "team.h"
 
 void attack(Character * attacker, Character * defender, Tile gameMap[10][10]){
-    char attackerType = gameMap[attacker->pos[1]][attacker->pos[0]].type;
-    
     if(attacker == NULL || defender == NULL){
         printf("Error: no attacker/defender found.\n");
         return;
     }
+
+    char attackerType = gameMap[attacker->pos[1]][attacker->pos[0]].type;
 
     if(attacker->berserker && attacker->health <= 7){
         defender->health -= attacker->attack*2;
@@ -83,11 +83,18 @@ bool moveRight(Team* team, Team* enemyTeam, Tile gameMap [10][10], int character
         gameMap[newY][newX].type = moverType;
         return true;
     }
-    else if(newY == 5 && newX ==5){
-        attack_palace(gameMap[5][5].palace,team->members[characterIndex]);
+    else if(newY == 5 && newX == 5){
+        if(team->isAI){
+            attack_palace(gameMap[5][5].palace, team->members[characterIndex]);
+            return true;
+        }
+        printf("Can't move: that's your own palace!\n");
+    }
+    else if(gameMap[newY][newX].type == '8'){
+        attack_Defender();
     }
     else{
-        printf("Can't move due to '%c' blocking\n", gameMap[newY][newX].type); 
+        printf("Can't move due to '%c' blocking\n", gameMap[newY][newX].type);
     }
     return false;
 }
@@ -99,7 +106,7 @@ bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int characterI
     int newY = posY;
     char moverType = gameMap[posY][posX].type;
 
-    if(newX >= 10){
+    if(newX < 0){
         printf("Invalid move: Out of bounds.\n");
         return false;
     }
@@ -126,8 +133,12 @@ bool moveLeft(Team* team, Team* enemyTeam, Tile gameMap [10][10], int characterI
         gameMap[newY][newX].type = moverType;
         return true;
     }
-    else if(newY == 5 && newX ==5){
-        attack_palace(gameMap[5][5].palace,team->members[characterIndex]);
+    else if(newY == 5 && newX == 5){
+        if(team->isAI){
+            attack_palace(gameMap[5][5].palace, team->members[characterIndex]);
+            return true;
+        }
+        printf("Can't move: that's your own palace!\n");
     }
     else if(gameMap[newY][newX].type == '8'){
         attack_Defender();
@@ -145,7 +156,7 @@ bool moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], int characterInd
     int newX = posX;
     char moverType = gameMap[posY][posX].type;
 
-    if(newY >= 10){
+    if(newY < 0){
         printf("Invalid move: Out of bounds.\n");
         return false;
     }
@@ -172,8 +183,12 @@ bool moveUp(Team* team, Team* enemyTeam, Tile gameMap [10][10], int characterInd
         gameMap[newY][newX].type = moverType;
         return true;
     }
-    else if(newY == 5 && newX ==5){
-        attack_palace(gameMap[5][5].palace,team->members[characterIndex]);
+    else if(newY == 5 && newX == 5){
+        if(team->isAI){
+            attack_palace(gameMap[5][5].palace, team->members[characterIndex]);
+            return true;
+        }
+        printf("Can't move: that's your own palace!\n");
     }
     else if(gameMap[newY][newX].type == '8'){
         attack_Defender();
@@ -218,8 +233,12 @@ bool moveDown(Team* team, Team* enemyTeam, Tile gameMap [10][10], int characterI
         gameMap[newY][newX].type = moverType;
         return true;
     }
-    else if(newY == 5 && newX ==5){
-        attack_palace(gameMap[5][5].palace ,team->members[characterIndex]);
+    else if(newY == 5 && newX == 5){
+        if(team->isAI){
+            attack_palace(gameMap[5][5].palace, team->members[characterIndex]);
+            return true;
+        }
+        printf("Can't move: that's your own palace!\n");
     }
     else if(gameMap[newY][newX].type == '8'){
         attack_Defender();

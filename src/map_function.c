@@ -15,7 +15,6 @@ void printMap(Tile gameMap[10][10], Palace * palace) {
 }
 
 void generateMap(Tile gameMap[10][10], Palace * palace){
-    srand(time(NULL));
     initPalace(palace);
 
     for(int i = 0; i < 10; i++){

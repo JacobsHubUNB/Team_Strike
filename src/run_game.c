@@ -13,6 +13,35 @@
 #include "bot_logic.h"
 #include "palace.h"
 
+// Allocate a team shell for loadGame to fill in
+Team * allocEmptyTeam(bool isAI){
+    Team * team = malloc(sizeof(Team));
+    if(team == NULL){
+        printf("Failed to allocate memory for team\n");
+        return NULL;
+    }
+    team->isAI = isAI;
+    team->teamName = NULL;
+    for(int i = 0; i < 4; i++){
+        team->members[i] = malloc(sizeof(Character));
+        if(team->members[i] == NULL){
+            printf("Failed to allocate memory for team member %d\n", i);
+            for(int j = 0; j < i; j++){
+                free(team->members[j]);
+            }
+            free(team);
+            return NULL;
+        }
+        team->members[i]->health = 0;
+        team->members[i]->attack = 0;
+        team->members[i]->pos[0] = 0;
+        team->members[i]->pos[1] = 0;
+        team->members[i]->berserker = false;
+        team->members[i]->bulldozer = false;
+    }
+    return team;
+}
+
 int checkTeamAlive(Team* team){
     int aliveCount = 0;
     for(int i = 0; i < 4; i++){
@@ -78,7 +107,19 @@ int main(int argc, char ** argv){
             generateMap(gameMap, &palace);
             AI = generate_team(gameMap, true);
             team1 = generate_team(gameMap, false);
+            team1->teamName = malloc(strlen("Player") + 1);
+            if(team1->teamName != NULL){
+                strcpy(team1->teamName, "Player");
+            }
         } else {
+            // The teams must exist before loadGame can fill them in
+            team1 = allocEmptyTeam(false);
+            AI = allocEmptyTeam(true);
+            AI->teamName = "AI";
+
+            initPalace(&palace);
+            gameMap[5][5].palace = &palace;
+
             loadGame(gameMap, team1, AI, file);
             fclose(file);
         }

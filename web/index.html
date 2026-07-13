@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeamStrike — Tactical Command</title>
+<style>
+  :root {
+    --bg: #0d0f16;
+    --panel: #141826;
+    --panel-edge: #232941;
+    --tile: #1a1f30;
+    --tile-alt: #171c2b;
+    --grid: #262d45;
+    --ink: #dfe3ee;
+    --muted: #8a91a8;
+    --teal: #4fd8c4;
+    --teal-dim: #2a6f66;
+    --amber: #f0a83c;
+    --amber-dim: #7a5620;
+    --gold: #e8c35a;
+    --red: #e05656;
+    --mono: "Cascadia Mono", "Consolas", "JetBrains Mono", "Courier New", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  /* faint CRT scanlines over everything */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
+    z-index: 50;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  header {
+    display: flex; align-items: center; gap: 24px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--panel-edge);
+    background: var(--panel);
+  }
+  .logo {
+    font-size: 20px; font-weight: 700; letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-shadow: 0 0 12px rgba(79,216,196,.55);
+    white-space: nowrap;
+  }
+  .logo b { color: var(--teal); font-weight: 700; }
+  .palace-meter {
+    flex: 1; display: flex; align-items: center; gap: 10px; min-width: 160px;
+  }
+  .palace-meter .label { color: var(--muted); font-size: 12px; letter-spacing: .12em; white-space: nowrap; }
+  .bar {
+    flex: 1; height: 12px; border: 1px solid var(--panel-edge);
+    background: var(--bg); border-radius: 2px; overflow: hidden;
+  }
+  .bar > div {
+    height: 100%; background: var(--gold);
+    box-shadow: 0 0 8px rgba(232,195,90,.6);
+    transition: width .35s ease;
+  }
+  .bar.low > div { background: var(--red); box-shadow: 0 0 8px rgba(224,86,86,.6); }
+  #palaceNum { color: var(--gold); min-width: 5ch; text-align: right; }
+  #newGameBtn {
+    font-family: var(--mono); font-size: 13px; letter-spacing: .1em;
+    background: none; border: 1px solid var(--teal-dim); color: var(--teal);
+    padding: 7px 16px; border-radius: 3px; cursor: pointer;
+  }
+  #newGameBtn:hover, #newGameBtn:focus-visible { background: rgba(79,216,196,.1); outline: none; border-color: var(--teal); }
+
+  main {
+    flex: 1; display: grid;
+    grid-template-columns: 230px minmax(0,1fr) 290px;
+    gap: 16px; padding: 16px 22px; min-height: 0;
+  }
+  .side { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--panel-edge);
+    border-radius: 4px; padding: 12px;
+  }
+  .panel h2 {
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px; font-weight: 400;
+  }
+  .panel h2 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; }
+  .dot.teal { background: var(--teal); box-shadow: 0 0 6px var(--teal); }
+  .dot.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+
+  .unit-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px; border-radius: 3px; border: 1px solid transparent;
+    cursor: pointer; margin-bottom: 6px; background: var(--tile-alt);
+  }
+  .unit-card:last-child { margin-bottom: 0; }
+  .unit-card:hover { border-color: var(--teal-dim); }
+  .unit-card.selected { border-color: var(--teal); background: rgba(79,216,196,.08); }
+  .unit-card.dead { opacity: .35; cursor: default; }
+  .unit-card.dead:hover { border-color: transparent; }
+  .unit-card.ai-card { cursor: default; }
+  .unit-card.ai-card:hover { border-color: transparent; }
+  .badge {
+    width: 30px; height: 30px; border-radius: 5px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px;
+    background: var(--teal-dim); color: #0a2622; border: 1px solid var(--teal);
+  }
+  .badge.ai { background: var(--amber-dim); color: #2b1c05; border-color: var(--amber); border-radius: 50%; }
+  .unit-info { flex: 1; min-width: 0; }
+  .unit-info .row1 { display: flex; justify-content: space-between; font-size: 12px; }
+  .unit-info .cls { color: var(--muted); font-size: 11px; }
+  .hp-bar { height: 5px; background: var(--bg); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+  .hp-bar > div { height: 100%; background: var(--teal); transition: width .3s ease; }
+  .hp-bar.ai > div { background: var(--amber); }
+  .hp-bar.hurt > div { background: var(--red); }
+
+  /* board */
+  .board-wrap {
+    display: flex; align-items: center; justify-content: center; min-height: 0;
+  }
+  #board {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 2px;
+    background: var(--grid);
+    border: 2px solid var(--panel-edge);
+    border-radius: 6px;
+    padding: 2px;
+    aspect-ratio: 1;
+    height: min(100%, 78vh);
+    max-width: 100%;
+    box-shadow: 0 0 40px rgba(79,216,196,.06), inset 0 0 60px rgba(0,0,0,.5);
+  }
+  .tile {
+    background: var(--tile);
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(12px, 2.6vh, 22px);
+    position: relative; border-radius: 2px;
+    user-select: none;
+  }
+  .tile:nth-child(odd) { background: var(--tile-alt); }
+  .tile.obstacle { color: #566; }
+  .tile.palace {
+    background: radial-gradient(circle, rgba(232,195,90,.22), var(--tile) 75%);
+    animation: palacePulse 3s ease-in-out infinite;
+  }
+  @keyframes palacePulse {
+    0%, 100% { box-shadow: inset 0 0 10px rgba(232,195,90,.25); }
+    50% { box-shadow: inset 0 0 22px rgba(232,195,90,.5); }
+  }
+  .tile .unit {
+    width: 78%; height: 78%; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+  .tile .unit.player { background: var(--teal-dim); color: #eafffb; border: 1px solid var(--teal); cursor: pointer; }
+  .tile .unit.ai { background: var(--amber-dim); color: #ffefd2; border: 1px solid var(--amber); border-radius: 50%; }
+  .tile .unit.player.selected {
+    outline: 2px solid var(--teal);
+    box-shadow: 0 0 14px rgba(79,216,196,.8);
+    animation: selPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes selPulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(79,216,196,.5); }
+    50% { box-shadow: 0 0 18px rgba(79,216,196,.95); }
+  }
+  .tile.flash { animation: dmgFlash .5s ease; }
+  @keyframes dmgFlash {
+    0% { background: rgba(224,86,86,.75); }
+    100% { background: var(--tile); }
+  }
+
+  /* log */
+  #log {
+    flex: 1; overflow-y: auto; min-height: 0;
+    font-size: 12px; line-height: 1.55; color: var(--muted);
+  }
+  #log .entry { margin-bottom: 2px; word-wrap: break-word; }
+  #log .entry.hit { color: var(--red); }
+  #log .entry.good { color: var(--teal); }
+  #log .entry.warn { color: var(--amber); }
+  .log-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+  /* controls */
+  .controls { display: flex; align-items: center; gap: 14px; justify-content: center; }
+  .dpad { display: grid; grid-template-columns: repeat(3, 34px); grid-template-rows: repeat(2, 34px); gap: 4px; }
+  .dpad button, #skipBtn {
+    font-family: var(--mono); font-size: 15px;
+    background: var(--tile-alt); color: var(--ink);
+    border: 1px solid var(--panel-edge); border-radius: 4px; cursor: pointer;
+  }
+  .dpad button:hover, .dpad button:focus-visible, #skipBtn:hover, #skipBtn:focus-visible {
+    border-color: var(--teal); color: var(--teal); outline: none;
+  }
+  .dpad .up { grid-column: 2; }
+  .dpad .left { grid-column: 1; grid-row: 2; }
+  .dpad .down { grid-column: 2; grid-row: 2; }
+  .dpad .right { grid-column: 3; grid-row: 2; }
+  #skipBtn { padding: 8px 14px; font-size: 12px; letter-spacing: .1em; }
+  .hint { color: var(--muted); font-size: 11px; line-height: 1.6; }
+  .hint kbd {
+    background: var(--tile-alt); border: 1px solid var(--panel-edge);
+    padding: 1px 5px; border-radius: 3px; font-family: var(--mono); font-size: 10px;
+  }
+
+  /* overlay */
+  #overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(9,11,17,.88);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #overlay.hidden { display: none; }
+  .overlay-box {
+    background: var(--panel); border: 1px solid var(--panel-edge);
+    border-radius: 6px; padding: 36px 44px; text-align: center; max-width: 420px;
+  }
+  .overlay-box h1 {
+    font-size: 26px; letter-spacing: .25em; text-transform: uppercase;
+    margin-bottom: 8px; text-shadow: 0 0 16px rgba(79,216,196,.5);
+  }
+  .overlay-box h1 .accent { color: var(--teal); }
+  .overlay-box h1.win { color: var(--teal); }
+  .overlay-box h1.lose { color: var(--red); text-shadow: 0 0 16px rgba(224,86,86,.5); }
+  .overlay-box p { color: var(--muted); margin-bottom: 22px; font-size: 13px; line-height: 1.6; }
+  .overlay-box input {
+    font-family: var(--mono); font-size: 14px; text-align: center;
+    background: var(--bg); color: var(--ink);
+    border: 1px solid var(--panel-edge); border-radius: 3px;
+    padding: 9px 12px; width: 100%; margin-bottom: 16px;
+  }
+  .overlay-box input:focus-visible { outline: none; border-color: var(--teal); }
+  .overlay-box button {
+    font-family: var(--mono); font-size: 14px; letter-spacing: .15em;
+    background: var(--teal-dim); color: #eafffb;
+    border: 1px solid var(--teal); border-radius: 3px;
+    padding: 10px 28px; cursor: pointer; text-transform: uppercase;
+  }
+  .overlay-box button:hover, .overlay-box button:focus-visible { background: rgba(79,216,196,.35); outline: none; }
+
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+    main { grid-template-columns: 1fr; }
+    #board { height: auto; width: 100%; }
+    header { flex-wrap: wrap; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo">Team<b>Strike</b></div>
+    <div class="palace-meter">
+      <span class="label">🏯 PALACE</span>
+      <div class="bar" id="palaceBar"><div style="width:100%"></div></div>
+      <span id="palaceNum">30/30</span>
+    </div>
+    <button id="newGameBtn">NEW GAME</button>
+  </header>
+
+  <main>
+    <div class="side">
+      <div class="panel" id="playerPanel">
+        <h2><span class="dot teal"></span><span id="playerTeamName">YOUR TEAM</span></h2>
+        <div id="playerUnits"></div>
+      </div>
+      <div class="panel">
+        <h2>Orders</h2>
+        <div class="controls">
+          <div class="dpad">
+            <button class="up" data-dir="w" aria-label="Move up">▲</button>
+            <button class="left" data-dir="a" aria-label="Move left">◀</button>
+            <button class="down" data-dir="s" aria-label="Move down">▼</button>
+            <button class="right" data-dir="d" aria-label="Move right">▶</button>
+          </div>
+          <button id="skipBtn">SKIP TURN</button>
+        </div>
+        <div class="hint" style="margin-top:12px">
+          <kbd>1</kbd>–<kbd>4</kbd> select unit · <kbd>W A S D</kbd> or arrows move ·
+          <kbd>X</kbd> skip. Move into an enemy to attack. Berserkers deal double
+          damage below 8 HP; bulldozers smash through rocks.
+        </div>
+      </div>
+    </div>
+
+    <div class="board-wrap"><div id="board" role="grid" aria-label="battlefield"></div></div>
+
+    <div class="side">
+      <div class="panel">
+        <h2><span class="dot amber"></span>AI TEAM</h2>
+        <div id="aiUnits"></div>
+      </div>
+      <div class="panel log-panel">
+        <h2>Battle log</h2>
+        <div id="log"></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="overlay">
+    <div class="overlay-box" id="overlayBox">
+      <h1>Team<span class="accent">Strike</span></h1>
+      <p>Four of yours against four of theirs. Reach the enemy, protect the
+        palace at the center — if it falls, so do you.</p>
+      <input id="teamNameInput" maxlength="30" placeholder="Name your team" autocomplete="off">
+      <button id="startBtn">Deploy</button>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const board = document.getElementById('board');
+  const logEl = document.getElementById('log');
+  const overlay = document.getElementById('overlay');
+  const overlayBox = document.getElementById('overlayBox');
+
+  let state = null;
+  let prev = null;
+  let selected = 0;        // player unit index 0-3
+  let maxHp = { player: [1,1,1,1], ai: [1,1,1,1], palace: 30 };
+  let busy = false;
+
+  // Build the 100 tiles once
+  const tiles = [];
+  for (let y = 0; y < 10; y++) {
+    for (let x = 0; x < 10; x++) {
+      const t = document.createElement('div');
+      t.className = 'tile';
+      t.dataset.x = x; t.dataset.y = y;
+      board.appendChild(t);
+      tiles.push(t);
+    }
+  }
+  const tileAt = (x, y) => tiles[y * 10 + x];
+
+  function addLog(lines) {
+    for (let line of lines) {
+      line = line.replace(/\*/g, '').trim();
+      if (!line) continue;
+      const div = document.createElement('div');
+      div.className = 'entry';
+      if (/damage dealt|UNDER ATTACK|Taking Damage/i.test(line)) div.classList.add('hit');
+      if (/DEFEATED|DESTROYED/i.test(line)) div.classList.add('warn');
+      if (/Berserker|Bulldozer|new battle/i.test(line)) div.classList.add('good');
+      div.textContent = line;
+      logEl.appendChild(div);
+    }
+    logEl.scrollTop = logEl.scrollHeight;
+    while (logEl.children.length > 200) logEl.removeChild(logEl.firstChild);
+  }
+
+  function unitClass(m) { return m.berserker ? 'Berserker' : 'Bulldozer'; }
+
+  function renderRoster(el, team, side) {
+    el.innerHTML = '';
+    team.members.forEach((m, i) => {
+      const card = document.createElement('div');
+      card.className = 'unit-card' + (side === 'ai' ? ' ai-card' : '');
+      if (m.hp <= 0) card.classList.add('dead');
+      if (side === 'player' && i === selected && m.hp > 0) card.classList.add('selected');
+
+      const pct = Math.max(0, Math.min(100, 100 * m.hp / maxHp[side][i]));
+      const label = side === 'player' ? (i + 1) : (m.ad > 9 ? 'X' : 'D');
+      const cls = side === 'player' ? unitClass(m) : (m.ad > 9 ? 'Striker' : 'Guard');
+      card.innerHTML =
+        '<div class="badge ' + (side === 'ai' ? 'ai' : '') + '">' + label + '</div>' +
+        '<div class="unit-info">' +
+          '<div class="row1"><span>HP ' + Math.max(0, m.hp) + ' · AD ' + m.ad + '</span></div>' +
+          '<div class="cls">' + cls + (m.hp <= 0 ? ' — down' : '') + '</div>' +
+          '<div class="hp-bar ' + (side === 'ai' ? 'ai' : '') + (pct < 35 ? ' hurt' : '') + '">' +
+            '<div style="width:' + pct + '%"></div></div>' +
+        '</div>';
+      if (side === 'player' && m.hp > 0) {
+        card.addEventListener('click', () => { selected = i; render(); });
+      }
+      el.appendChild(card);
+    });
+  }
+
+  function render() {
+    if (!state) return;
+
+    // palace meter
+    const p = Math.max(0, state.palace);
+    const bar = document.getElementById('palaceBar');
+    bar.firstElementChild.style.width = (100 * p / maxHp.palace) + '%';
+    bar.classList.toggle('low', p <= 10);
+    document.getElementById('palaceNum').textContent = p + '/' + maxHp.palace;
+
+    document.getElementById('playerTeamName').textContent =
+      (state.player ? state.player.name : 'YOUR TEAM').toUpperCase();
+
+    // board
+    for (const t of tiles) {
+      t.textContent = '';
+      t.className = 'tile';
+    }
+    for (let y = 0; y < 10; y++) {
+      for (let x = 0; x < 10; x++) {
+        const ch = state.map[y][x];
+        const t = tileAt(x, y);
+        if (ch === 'O') { t.textContent = '🪨'; t.classList.add('obstacle'); }
+        else if (ch === 'P') { t.textContent = '🏯'; t.classList.add('palace'); }
+        else if (ch === '8') { t.textContent = '🗼'; }
+      }
+    }
+    if (state.player) {
+      state.player.members.forEach((m, i) => {
+        if (m.hp > 0 && m.x < 10 && m.y < 10) {
+          const u = document.createElement('div');
+          u.className = 'unit player' + (i === selected ? ' selected' : '');
+          u.textContent = i + 1;
+          u.title = unitClass(m) + ' — HP ' + m.hp;
+          u.addEventListener('click', () => { selected = i; render(); });
+          tileAt(m.x, m.y).appendChild(u);
+        }
+      });
+      state.ai.members.forEach((m) => {
+        if (m.hp > 0 && m.x < 10 && m.y < 10) {
+          const u = document.createElement('div');
+          u.className = 'unit ai';
+          u.textContent = m.ad > 9 ? 'X' : 'D';
+          u.title = (m.ad > 9 ? 'Striker' : 'Guard') + ' — HP ' + m.hp;
+          tileAt(m.x, m.y).appendChild(u);
+        }
+      });
+      renderRoster(document.getElementById('playerUnits'), state.player, 'player');
+      renderRoster(document.getElementById('aiUnits'), state.ai, 'ai');
+    }
+
+    // damage flashes
+    if (prev && prev.player && state.player) {
+      const flash = (m, pm) => {
+        if (m.hp < pm.hp && m.x < 10 && m.y < 10) tileAt(m.x, m.y).classList.add('flash');
+      };
+      state.player.members.forEach((m, i) => flash(m, prev.player.members[i]));
+      state.ai.members.forEach((m, i) => flash(m, prev.ai.members[i]));
+    }
+
+    // end state
+    if (state.status === 'player_wins' || state.status === 'ai_wins') {
+      const win = state.status === 'player_wins';
+      overlayBox.innerHTML =
+        '<h1 class="' + (win ? 'win' : 'lose') + '">' + (win ? 'Victory' : 'Defeat') + '</h1>' +
+        '<p>' + (win
+          ? 'The enemy team has been wiped out. The palace stands.'
+          : (state.palace <= 0 ? 'The palace has fallen.' : 'Your whole team is down.')) + '</p>' +
+        '<button id="againBtn">Play again</button>';
+      overlay.classList.remove('hidden');
+      document.getElementById('againBtn').addEventListener('click', showNewGame);
+    }
+  }
+
+  async function send(cmd) {
+    if (busy) return null;
+    busy = true;
+    try {
+      const res = await fetch('/api/cmd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cmd }),
+      });
+      const data = await res.json();
+      if (data.error) { addLog(['[system] ' + data.error]); return null; }
+      addLog(data.log);
+      if (data.state) { prev = state; state = data.state; render(); }
+      return data;
+    } catch (e) {
+      addLog(['[system] connection lost: ' + e.message]);
+      return null;
+    } finally {
+      busy = false;
+    }
+  }
+
+  async function newGame(name) {
+    const data = await send('new ' + name);
+    if (!data || !data.state) return;
+    maxHp = {
+      player: data.state.player.members.map((m) => m.hp),
+      ai: data.state.ai.members.map((m) => m.hp),
+      palace: data.state.palace,
+    };
+    selected = 0;
+    prev = null;
+    logEl.innerHTML = '';
+    addLog(data.log);
+    overlay.classList.add('hidden');
+    render();
+  }
+
+  function showNewGame() {
+    overlayBox.innerHTML =
+      '<h1>Team<span class="accent">Strike</span></h1>' +
+      '<p>Four of yours against four of theirs. Reach the enemy, protect the ' +
+      'palace at the center — if it falls, so do you.</p>' +
+      '<input id="teamNameInput" maxlength="30" placeholder="Name your team" autocomplete="off">' +
+      '<button id="startBtn">Deploy</button>';
+    overlay.classList.remove('hidden');
+    wireStart();
+    document.getElementById('teamNameInput').focus();
+  }
+
+  function wireStart() {
+    const input = document.getElementById('teamNameInput');
+    const go = () => {
+      const name = (input.value || 'Player').replace(/[^\w \-]/g, '').trim() || 'Player';
+      newGame(name);
+    };
+    document.getElementById('startBtn').addEventListener('click', go);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+  }
+
+  function move(dir) {
+    if (!state || state.status !== 'playing') return;
+    const m = state.player.members[selected];
+    if (!m || m.hp <= 0) { addLog(['[system] select a living unit first']); return; }
+    send('move ' + (selected + 1) + ' ' + dir);
+  }
+
+  document.querySelectorAll('.dpad button').forEach((b) =>
+    b.addEventListener('click', () => move(b.dataset.dir)));
+  document.getElementById('skipBtn').addEventListener('click', () => {
+    if (state && state.status === 'playing') send('skip');
+  });
+  document.getElementById('newGameBtn').addEventListener('click', showNewGame);
+
+  document.addEventListener('keydown', (e) => {
+    if (!overlay.classList.contains('hidden')) return;
+    if (e.target.tagName === 'INPUT') return;
+    const k = e.key.toLowerCase();
+    if (k >= '1' && k <= '4') {
+      const i = +k - 1;
+      if (state && state.player.members[i].hp > 0) { selected = i; render(); }
+    }
+    else if (k === 'w' || k === 'arrowup') { e.preventDefault(); move('w'); }
+    else if (k === 'a' || k === 'arrowleft') { e.preventDefault(); move('a'); }
+    else if (k === 's' || k === 'arrowdown') { e.preventDefault(); move('s'); }
+    else if (k === 'd' || k === 'arrowright') { e.preventDefault(); move('d'); }
+    else if (k === 'x') { if (state && state.status === 'playing') send('skip'); }
+  });
+
+  wireStart();
+  document.getElementById('teamNameInput').focus();
+})();
+</script>
+</body>
+</html>

@@ -29,6 +29,10 @@ void loadGame(Tile gameWorld[10][10], Team* playerTeam, Team* teamAI, FILE* file
     }
 
     while (fgets(line, sizeof(line), file)) {
+        int palaceHealth;
+        if (sscanf(line, "Palace Health: %d", &palaceHealth) == 1 && gameWorld[5][5].palace != NULL) {
+            gameWorld[5][5].palace->health = palaceHealth;
+        }
         if (strstr(line, "PLAYER TEAM:")) break;
     }
 
@@ -78,6 +82,16 @@ void loadGame(Tile gameWorld[10][10], Team* playerTeam, Team* teamAI, FILE* file
             return;
         }
         sscanf(line, "  Position: (%d, %d)",  &playerTeam->members[i]->pos[0], &playerTeam->members[i]->pos[1]);
+
+        // Read berserker flag
+        if (!fgets(line, sizeof(line), file)){
+            printf("Error reading berserker flag\n");
+            return;
+        }
+        int berserker = 0;
+        sscanf(line, "  Berserker: %d", &berserker);
+        playerTeam->members[i]->berserker = (berserker != 0);
+        playerTeam->members[i]->bulldozer = !playerTeam->members[i]->berserker;
     }
 
     while(fgets(line, sizeof(line), file)){
@@ -98,6 +112,9 @@ void loadGame(Tile gameWorld[10][10], Team* playerTeam, Team* teamAI, FILE* file
         // Read position
         fgets(line, sizeof(line), file);
         sscanf(line, "  Position: (%d, %d)", &teamAI->members[i]->pos[0], &teamAI->members[i]->pos[1]);
+
+        teamAI->members[i]->berserker = false;
+        teamAI->members[i]->bulldozer = false;
     }
 
     printf("Game loaded successfully\n");
